@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="BO7 Gunsmith LIVE", page_icon="🎯", layout="wide")
+st.set_page_config(page_title="BO7 Gunsmith PRO", page_icon="🔫", layout="wide")
 
 # --- LOGIN ---
 if 'logat' not in st.session_state:
@@ -10,7 +10,7 @@ def verifica():
     if st.session_state.user.lower() == "sefu" and st.session_state.parola == "admin123":
         st.session_state.logat = True
     else:
-        st.error("Parola greșită!")
+        st.error("Parola incorectă!")
 
 if not st.session_state.logat:
     st.title("🔒 BO7 War Room")
@@ -39,66 +39,56 @@ else:
     atasamente = {
         "Optic": ["Iron Sights", "Red Dot (+Acc)", "4x Scope (-Mob)", "Thermal"],
         "Muzzle": ["None", "Suppressor (-Range)", "Compensator (+Acc)"],
-        "Barrel": ["Standard", "Long Barrel (+Range/-Mob)", "Short Barrel (+Mob/-Acc)"],
+        "Barrel": ["Standard", "Long Barrel (+Range)", "Short Barrel (+Mob)"],
         "Underbarrel": ["None", "Vertical Grip (+Control)", "Ranger Grip (+Acc)"],
         "Magazine": ["Standard", "Fast Mag (+Reload)", "Extended Mag (-Mob)"],
-        "Stock": ["Standard", "No Stock (+Mob/-Control)", "Heavy Stock (+Control/-Mob)"],
+        "Stock": ["Standard", "No Stock (+Mob)", "Heavy Stock (+Control)"],
         "Rear Grip": ["Standard", "Quickdraw (+Handling)", "Steady Aim (+Acc)"],
-        "Fire Mod": ["Standard", "Rapid Fire (+Dmg/-Acc)"]
+        "Fire Mod": ["Standard", "Rapid Fire (+Dmg)"]
     }
 
     if meniu == "🔧 GUNSMITH (LIVE)":
         st.title("🛠️ WEAPON GUNSMITH")
         
-        # 1. SELECTIA ARMEI (SUS)
-        c_cat, c_weap = st.columns(2)
-        with c_cat:
+        # 1. SELECTIA ARMEI
+        c1, c2 = st.columns(2)
+        with c1:
             cat_p = st.selectbox("1. Categorie:", list(arsenal.keys()))
-        with c_weap:
+        with c2:
             weapon_p = st.selectbox("2. Arma:", arsenal[cat_p])
         
         st.markdown("---")
 
-        # 2. ZONA PRINCIPALA (SPLIT SCREEN)
-        # Coloana 1 (Stanga): Atasamente
-        # Coloana 2 (Dreapta): Statistici Live
+        # 2. INTERFATA SPLIT-SCREEN
         col_stanga, col_dreapta = st.columns([1.5, 1])
 
         with col_stanga:
-            st.subheader("🔧 Configurează Atașamentele")
-            # Folosim 'expander' ca sa arate curat, sau direct selectbox-uri
-            
-            c1, c2 = st.columns(2)
-            with c1:
-                opt = st.selectbox("👁️ OPTIC", atasamente["Optic"])
-                muz = st.selectbox("🔇 MUZZLE", atasamente["Muzzle"])
-                bar = st.selectbox("📏 BARREL", atasamente["Barrel"])
-                und = st.selectbox("✊ UNDERBARREL", atasamente["Underbarrel"])
-            with c2:
-                mag = st.selectbox("🔋 MAGAZINE", atasamente["Magazine"])
-                stk = st.selectbox("🍑 STOCK", atasamente["Stock"])
-                grp = st.selectbox("🧤 GRIP", atasamente["Rear Grip"])
-                mod = st.selectbox("🔥 MOD", atasamente["Fire Mod"])
+            st.subheader("🔧 Atașamente")
+            # Le punem direct, fara alte coloane imbricate, ca sa evitam erorile
+            opt = st.selectbox("👁️ OPTIC", atasamente["Optic"])
+            muz = st.selectbox("🔇 MUZZLE", atasamente["Muzzle"])
+            bar = st.selectbox("📏 BARREL", atasamente["Barrel"])
+            und = st.selectbox("✊ UNDERBARREL", atasamente["Underbarrel"])
+            mag = st.selectbox("🔋 MAGAZINE", atasamente["Magazine"])
+            stk = st.selectbox("🍑 STOCK", atasamente["Stock"])
+            grp = st.selectbox("🧤 GRIP", atasamente["Rear Grip"])
+            mod = st.selectbox("🔥 MOD", atasamente["Fire Mod"])
 
-        # --- CALCULELE SE FAC IN TIMP REAL AICI ---
-        # Valori de baza
-        fp = 50; acc = 50; mob = 50; hnd = 50
+        # --- CALCULE MATEMATICE ---
+        # Initializam variabilele
+        fp = 50.0
+        acc = 50.0
+        mob = 50.0
+        hnd = 50.0
         
-        # Profil Arma
+        # Profil Arma (Base stats)
         if "Sniper" in cat_p: fp=90; mob=30; acc=80
-        if "SMG" in cat_p: fp=40; mob=85; hnd=80
-        if "Shotgun" in cat_p: fp=95; acc=20; mob=70
+        elif "SMG" in cat_p: fp=40; mob=85; hnd=80
+        elif "Shotgun" in cat_p: fp=95; acc=20; mob=70
+        elif "Assault" in cat_p: fp=60; acc=60; mob=60
         
-        # Modificatori (Logica matematica)
-        # Stock
-        if "No Stock" in stk: mob += 20; acc -= 20; hnd -= 10
-        if "Heavy Stock" in stk: acc += 15; mob -= 15
-        # Barrel
-        if "Long Barrel" in bar: acc += 15; mob -= 10
-        if "Short Barrel" in bar: mob += 15; acc -= 15
-        # Muzzle
-        if "Suppressor" in muz: fp -= 5; hnd += 5
-        if "Compensator" in muz: acc += 10; hnd -= 5
-        # Underbarrel
-        if "Vertical Grip" in und: acc += 8; hnd += 2
-        if "Ranger Grip
+        # Modificatori (Logica simplificata si sigura)
+        # Verificam fiecare variabila pe rand
+        if "No Stock" in stk: 
+            mob += 20; acc -= 20; hnd -= 10
+        if "
