@@ -1,94 +1,58 @@
 import streamlit as st
 
-st.set_page_config(page_title="BO7 Gunsmith PRO", page_icon="🔫", layout="wide")
+st.set_page_config(page_title="BO7 ULTIMATE COMPANION", page_icon="💀", layout="wide")
 
-# --- LOGIN ---
+# ==========================================
+# 1. SISTEM DE SECURITATE (LOGIN)
+# ==========================================
 if 'logat' not in st.session_state:
     st.session_state.logat = False
 
-def verifica():
+def verifica_parola():
     if st.session_state.user.lower() == "sefu" and st.session_state.parola == "admin123":
         st.session_state.logat = True
     else:
-        st.error("Parola incorectă!")
+        st.error("❌ Acces Respins! Date incorecte.")
 
 if not st.session_state.logat:
-    st.title("🔒 BO7 War Room")
-    st.text_input("Utilizator:", key="user")
-    st.text_input("Parola:", type="password", key="parola")
-    st.button("LOGIN", on_click=verifica)
+    st.markdown("<h1 style='text-align: center;'>🔒 BO7 WAR ROOM</h1>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.text_input("Operativ:", key="user")
+        st.text_input("Cod Acces:", type="password", key="parola")
+        st.button("INIȚIALIZARE SISTEM", on_click=verifica_parola, type="primary", use_container_width=True)
 
+# ==========================================
+# 2. INTERFAȚA PRINCIPALĂ (DUPĂ LOGIN)
+# ==========================================
 else:
-    # --- MENIU LATERAL ---
-    st.sidebar.title("NAVIGARE")
-    meniu = st.sidebar.radio("Mergi la:", ["🔧 GUNSMITH (LIVE)", "🏠 LOBBY"])
+    # --- MENIU LATERAL (NAVIGARE) ---
+    st.sidebar.markdown("## ≡ NAVIGARE TACTICĂ")
+    meniu = st.sidebar.radio("Mergi la:", 
+        ["🏠 LOBBY", "🔫 WEAPONS (LOADOUTS)", "🎫 BATTLE PASS", "💀 OPERATORS", "🛒 STORE"])
+    
+    st.sidebar.markdown("---")
+    st.sidebar.info(f"🟢 Status: ONLINE\n👤 User: {st.session_state.user.upper()}")
 
-    # --- DATLE ARME ---
+    # --- BAZA DE DATE MASIVĂ (ARSENAL) ---
     arsenal = {
-        "Assault Rifles": ["Maddox RFB", "AK-27", "MXR-17", "M15 MOD 0"],
-        "SMGs": ["Jackal PDW", "C9", "KSV", "Tanto .22"],
-        "Marksman": ["M8A1", "Warden 308"],
-        "Snipers": ["VS Recon", "Hawker HX"],
-        "Shotguns": ["M10 Breacher"],
-        "LMGs": ["Sokol 545"],
-        "Pistols": ["Jäger 45"],
-        "Specials": ["NX Ravager"]
+        "Assault Rifles": ["Maddox RFB", "AK-27", "MXR-17", "M15 MOD 0", "X9 Maverick", "DS20 Mirage", "Peacekeeper MK1"],
+        "SMGs": ["Jackal PDW", "C9", "KSV", "Tanto .22", "PP-919", "Saug 9mm"],
+        "Shotguns": ["M10 Breacher", "ASG-89"],
+        "LMGs": ["Sokol 545", "MK.7B", "XM325"],
+        "Marksman": ["M8A1", "Warden 308", "M34 Novaline"],
+        "Snipers": ["VS Recon", "Hawker HX", "Shadow SK", "XR-3 ION"],
+        "Pistols": ["Jäger 45", "Velox 8.7", "Coda 9"],
+        "Launchers": ["AAROW 109", "A.R.C. MI", "HEI-4"],
+        "Specials": ["NX Ravager"],
+        "Melee": ["Combat Knife", "Baseball Bat"]
     }
 
-    # --- LISTA ATASAMENTE ---
+    # --- BAZA DE DATE ATAȘAMENTE (DETALIATĂ) ---
     atasamente = {
-        "Optic": ["Iron Sights", "Red Dot (+Acc)", "4x Scope (-Mob)", "Thermal"],
-        "Muzzle": ["None", "Suppressor (-Range)", "Compensator (+Acc)"],
-        "Barrel": ["Standard", "Long Barrel (+Range)", "Short Barrel (+Mob)"],
-        "Underbarrel": ["None", "Vertical Grip (+Control)", "Ranger Grip (+Acc)"],
-        "Magazine": ["Standard", "Fast Mag (+Reload)", "Extended Mag (-Mob)"],
-        "Stock": ["Standard", "No Stock (+Mob)", "Heavy Stock (+Control)"],
-        "Rear Grip": ["Standard", "Quickdraw (+Handling)", "Steady Aim (+Acc)"],
-        "Fire Mod": ["Standard", "Rapid Fire (+Dmg)"]
-    }
-
-    if meniu == "🔧 GUNSMITH (LIVE)":
-        st.title("🛠️ WEAPON GUNSMITH")
-        
-        # 1. SELECTIA ARMEI
-        c1, c2 = st.columns(2)
-        with c1:
-            cat_p = st.selectbox("1. Categorie:", list(arsenal.keys()))
-        with c2:
-            weapon_p = st.selectbox("2. Arma:", arsenal[cat_p])
-        
-        st.markdown("---")
-
-        # 2. INTERFATA SPLIT-SCREEN
-        col_stanga, col_dreapta = st.columns([1.5, 1])
-
-        with col_stanga:
-            st.subheader("🔧 Atașamente")
-            # Le punem direct, fara alte coloane imbricate, ca sa evitam erorile
-            opt = st.selectbox("👁️ OPTIC", atasamente["Optic"])
-            muz = st.selectbox("🔇 MUZZLE", atasamente["Muzzle"])
-            bar = st.selectbox("📏 BARREL", atasamente["Barrel"])
-            und = st.selectbox("✊ UNDERBARREL", atasamente["Underbarrel"])
-            mag = st.selectbox("🔋 MAGAZINE", atasamente["Magazine"])
-            stk = st.selectbox("🍑 STOCK", atasamente["Stock"])
-            grp = st.selectbox("🧤 GRIP", atasamente["Rear Grip"])
-            mod = st.selectbox("🔥 MOD", atasamente["Fire Mod"])
-
-        # --- CALCULE MATEMATICE ---
-        # Initializam variabilele
-        fp = 50.0
-        acc = 50.0
-        mob = 50.0
-        hnd = 50.0
-        
-        # Profil Arma (Base stats)
-        if "Sniper" in cat_p: fp=90; mob=30; acc=80
-        elif "SMG" in cat_p: fp=40; mob=85; hnd=80
-        elif "Shotgun" in cat_p: fp=95; acc=20; mob=70
-        elif "Assault" in cat_p: fp=60; acc=60; mob=60
-        
-        # Modificatori (Logica simplificata si sigura)
-        # Verificam fiecare variabila pe rand
-        if "No Stock" in stk: 
-            mob += 20; acc -= 20; hnd -= 10
-        if "
+        "Optic": ["Iron Sights", "Merlin Mini", "Slate Reflex (+Vis)", "Red Dot (+Acc)", "Kobra Sight", "4x Acog (-Mob)", "Thermal Scope", "Variable Zoom"],
+        "Muzzle": ["None", "Suppressor (-Range)", "Compensator (+Acc)", "Muzzle Brake (+Ctrl)", "Flash Guard"],
+        "Barrel": ["Standard", "Long Barrel (+Range)", "Reinforced Barrel (+Dmg)", "Short Barrel (+Mob)", "Rapid Fire Barrel"],
+        "Underbarrel": ["None", "Vertical Grip (+Ctrl)", "Ranger Foregrip (+Acc)", "Bipod", "Commando Grip", "Laser Sight (+Hip)"],
+        "Magazine": ["Standard Mag", "Fast Mag (+Rld)", "Extended Mag (-Mob)", "Drum Mag (-Mob)", "High Caliber (+Dmg)"],
+        "Rear Grip": ["None
