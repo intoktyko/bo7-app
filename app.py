@@ -7,14 +7,23 @@ import time
 st.set_page_config(page_title="BO7 ULTIMATE COMMAND", page_icon="💀", layout="wide")
 
 # ==========================================
-# 2. SISTEM DE LOGIN SECURIZAT
+# 2. SISTEM DE LOGIN (REPARAT)
 # ==========================================
+# Aici era problema: Inițializăm variabilele de la bun început
 if 'logat' not in st.session_state:
     st.session_state.logat = False
+if 'user' not in st.session_state:
+    st.session_state.user = ""
 
 def verifica_parola():
-    if st.session_state.user.lower() == "sefu" and st.session_state.parola == "admin123":
+    # Folosim direct valorile introduse in input
+    # Accesam widget-urile prin key
+    username_input = st.session_state.input_user
+    password_input = st.session_state.input_parola
+    
+    if username_input.lower() == "sefu" and password_input == "admin123":
         st.session_state.logat = True
+        st.session_state.user = username_input # Salvam explicit utilizatorul
         st.toast("✅ Acces Aprobat! Bine ai venit, Șefu'!")
     else:
         st.error("❌ EROARE: Date incorecte!")
@@ -25,8 +34,9 @@ if not st.session_state.logat:
     col_login1, col_login2, col_login3 = st.columns([1, 2, 1])
     with col_login2:
         st.info("Introduceți credențialele de acces:")
-        st.text_input("Operativ (User):", key="user")
-        st.text_input("Cod Securitate (Pass):", type="password", key="parola")
+        # Am schimbat key-urile ca sa nu se confunde cu variabila de sesiune
+        st.text_input("Operativ (User):", key="input_user")
+        st.text_input("Cod Securitate (Pass):", type="password", key="input_parola")
         st.button("🔴 INIȚIALIZARE SISTEM", on_click=verifica_parola, use_container_width=True)
 
 # ==========================================
@@ -43,8 +53,10 @@ else:
          "💀 OPERATORS", 
          "🛒 STORE"])
     
+    # Afișare User Securizată (folosim .get ca sa nu dea eroare)
+    current_user = st.session_state.get('user', 'OPERATOR')
     st.sidebar.markdown("---")
-    st.sidebar.success(f"🟢 STATUS: ONLINE\n👤 {st.session_state.user.upper()}")
+    st.sidebar.success(f"🟢 STATUS: ONLINE\n👤 {current_user.upper()}")
     
     # --- BAZA DE DATE MASIVĂ (ARSENAL COMPLET) ---
     arsenal = {
@@ -230,7 +242,7 @@ else:
         
         with l2:
             st.markdown("### PLAYER CARD")
-            st.warning(f"🔰 {st.session_state.user} | Level 55")
+            st.warning(f"🔰 {current_user} | Level 55")
             st.progress(1.0, text="Prestige 1 Ready")
             st.write("Friends Online: 4")
             st.write("- Ezgi (Playing Zombies)")
@@ -279,4 +291,5 @@ else:
     st.sidebar.markdown("---")
     if st.sidebar.button("🔴 DECONECTARE (LOGOUT)"):
         st.session_state.logat = False
+        st.session_state.user = ""
         st.rerun()
