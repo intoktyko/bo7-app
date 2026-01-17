@@ -293,3 +293,16 @@ else:
         st.session_state.logat = False
         st.session_state.user = ""
         st.rerun()
+# ... (restul codului din sidebar) ...
+    
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 💰 SUPPORT")
+    st.sidebar.info("Îți place aplicația? Mă poți susține cu o cafea!")
+    # Aici pui link-ul tau real de PayPal sau Stripe
+    st.sidebar.link_button("☕ Cumpără-mi o cafea (Donation)", "https://www.paypal.com")
+    
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🔴 DECONECTARE (LOGOUT)"):
+        st.session_state.logat = False
+        st.session_state.user = ""
+        st.rerun()
