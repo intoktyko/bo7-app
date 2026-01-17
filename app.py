@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="BO7 Ultimate Loadout", page_icon="🔫", layout="wide")
+st.set_page_config(page_title="BO7 Gunsmith PRO", page_icon="🔫", layout="wide")
 
 # --- LOGIN SYSTEM ---
 if 'logat' not in st.session_state:
@@ -20,11 +20,11 @@ if not st.session_state.logat:
 
 # --- APLICATIA PROPRIU-ZISA ---
 else:
-    # MENIU STÂNGA (NAVIGARE)
+    # MENIU STÂNGA
     st.sidebar.markdown("### ≡ NAVIGARE JOC")
     meniu = st.sidebar.radio("Mergi la:", ["🏠 LOBBY", "🔫 WEAPONS & LOADOUTS", "🎫 BATTLE PASS", "🛒 STORE"])
 
-    # --- BAZA DE DATE COMPLETA (Actualizată cu tot ce ai cerut) ---
+    # BAZA DE DATE (Arsenal Complet)
     arsenal = {
         "Assault Rifles": ["Maddox RFB", "AK-27", "MXR-17", "M15 MOD 0", "X9 Maverick", "DS20 Mirage", "Peacekeeper MK1"],
         "SMGs": ["Jackal PDW", "C9", "KSV", "Tanto .22", "PP-919"],
@@ -38,7 +38,7 @@ else:
         "Melee": ["Combat Knife", "Baseball Bat"]
     }
 
-    # TOATE ATAȘAMENTELE POSIBILE
+    # BAZA DE DATE ATASAMENTE
     atasamente = {
         "Optic": ["Iron Sights", "Merlin Mini", "Slate Reflex", "Red Dot", "Kobra Sight", "4x Acog", "Thermal Scope", "Variable Zoom"],
         "Muzzle": ["None", "Suppressor", "Compensator", "Muzzle Brake", "Flash Guard", "Breacher Device"],
@@ -50,111 +50,79 @@ else:
         "Fire Mod": ["Standard", "Rapid Fire", "Burst Mod (3-Round)"]
     }
 
-    # --- PAGINA: WEAPONS & LOADOUTS ---
+    # --- TAB WEAPONS ---
     if meniu == "🔫 WEAPONS & LOADOUTS":
         st.title("CREATE A CLASS")
         
-        # Tabs: Loadout (General) vs Gunsmith (Detaliat)
         tab1, tab2 = st.tabs(["📂 LOADOUT PRINCIPAL", "🔧 GUNSMITH (ARMURIER)"])
 
-        # --- TAB 1: LOADOUT OVERVIEW ---
+        # TAB 1: PREZENTARE GENERALA
         with tab1:
             st.subheader("CUSTOM CLASS 1")
-            
-            # PRIMARY & WILDCARD
             c1, c2 = st.columns([3, 1])
             with c1:
                 st.markdown("### 🔫 PRIMARY WEAPON")
-                cat_p = st.selectbox("Categorie:", list(arsenal.keys())[:-1], key="cat_p") # Fara Melee
+                cat_p = st.selectbox("Categorie:", list(arsenal.keys())[:-1], key="cat_p")
                 weapon_p = st.selectbox("Arma:", arsenal[cat_p], key="weapon_p")
-                st.info(f"Selectat: **{weapon_p}**")
+                st.info(f"Arma selectată: **{weapon_p}**")
             with c2:
                 st.markdown("### 🃏 WILDCARD")
                 st.selectbox("Card:", ["Overkill", "Gunfighter", "Perk Greed", "Danger Close"])
+            
+            st.write("---")
+            st.info("💡 Mergi la tab-ul **GUNSMITH** de sus pentru a modifica accesoriile și a vedea statisticile!")
 
-            st.markdown("---")
-
-            # SECONDARY & MELEE
-            c3, c4 = st.columns(2)
-            with c3:
-                st.markdown("### 🔫 SECONDARY")
-                st.selectbox("Arma Secundara:", arsenal["Pistols"] + arsenal["Launchers"])
-            with c4:
-                st.markdown("### 🔪 MELEE")
-                st.selectbox("Arma Alba:", arsenal["Melee"])
-
-            st.markdown("---")
-
-            # EQUIPMENT & FIELD UPGRADE
-            eq1, eq2, eq3 = st.columns(3)
-            with eq1: st.selectbox("TACTICAL", ["Stim Shot", "Flashbang", "EMP Grenade", "Smoke"])
-            with eq2: st.selectbox("LETHAL", ["Frag Grenade", "Semtex", "C4", "Combat Axe"])
-            with eq3: st.selectbox("FIELD UPGRADE", ["Assault Pack", "Trophy System", "Sleeper Agent"])
-
-            # PERKS
-            st.markdown("### 💎 PERKS")
-            pk1, pk2, pk3 = st.columns(3)
-            with pk1: st.selectbox("🔵 PERK 1", ["Ghost", "Flak Jacket", "Engineer", "Gung-Ho"])
-            with pk2: st.selectbox("🟢 PERK 2", ["Fast Hands", "Tracker", "Cold Blooded", "Dispatcher"])
-            with pk3: st.selectbox("🔴 PERK 3", ["Dexterity", "Double Time", "Vigilance", "Quartermaster"])
-
-        # --- TAB 2: GUNSMITH (CONSTRUIESTE ARMA) ---
+        # TAB 2: GUNSMITH CU CALCULE REALE
         with tab2:
             st.header(f"🔧 GUNSMITH: {weapon_p}")
-            st.caption("Alege cele 8 atașamente permise:")
+            st.caption("Modifică atașamentele pentru a vedea cum se schimbă statisticile în dreapta.")
 
             col_parts, col_stats = st.columns([2, 1])
             
             with col_parts:
-                # 8 SLOTURI COMPLETE
+                # SELECTOARELE DE ATASAMENTE
                 r1_a, r1_b = st.columns(2)
-                with r1_a: st.selectbox("👁️ OPTIC", atasamente["Optic"])
-                with r1_b: st.selectbox("🔇 MUZZLE", atasamente["Muzzle"])
+                with r1_a: opt = st.selectbox("👁️ OPTIC", atasamente["Optic"])
+                with r1_b: muz = st.selectbox("🔇 MUZZLE", atasamente["Muzzle"])
                 
                 r2_a, r2_b = st.columns(2)
-                with r2_a: st.selectbox("📏 BARREL", atasamente["Barrel"])
-                with r2_b: st.selectbox("✊ UNDERBARREL", atasamente["Underbarrel"])
+                with r2_a: bar = st.selectbox("📏 BARREL", atasamente["Barrel"])
+                with r2_b: und = st.selectbox("✊ UNDERBARREL", atasamente["Underbarrel"])
                 
                 r3_a, r3_b = st.columns(2)
-                with r3_a: st.selectbox("🔋 MAGAZINE", atasamente["Magazine"])
-                with r3_b: st.selectbox("🧤 REAR GRIP", atasamente["Rear Grip"])
+                with r3_a: mag = st.selectbox("🔋 MAGAZINE", atasamente["Magazine"])
+                with r3_b: grp = st.selectbox("🧤 REAR GRIP", atasamente["Rear Grip"])
                 
                 r4_a, r4_b = st.columns(2)
-                with r4_a: st.selectbox("🍑 STOCK", atasamente["Stock"])
-                with r4_b: st.selectbox("🔥 FIRE MOD", atasamente["Fire Mod"])
+                with r4_a: stk = st.selectbox("🍑 STOCK", atasamente["Stock"])
+                with r4_b: mod = st.selectbox("🔥 FIRE MOD", atasamente["Fire Mod"])
 
-            with col_stats:
-                st.markdown("### 📊 STATISTICI LIVE")
-                # Valori simulate (ca sa se miste barele cand schimbi)
-                fp = 55; acc = 60; mob = 65; hnd = 50
-                
-                # Simulăm impactul atașamentelor
-                if "Sniper" in cat_p: fp += 30; mob -= 30
-                if "SMG" in cat_p: mob += 20; acc -= 10
-                
-                st.write("🔥 Firepower"); st.progress(min(fp/100, 1.0))
-                st.write("🎯 Accuracy"); st.progress(min(acc/100, 1.0))
-                st.write("🏃 Mobility"); st.progress(min(mob/100, 1.0))
-                st.write("⚡ Handling"); st.progress(min(hnd/100, 1.0))
-                
-                if weapon_p in ["Maddox RFB", "M8A1"]:
-                    st.success("🏆 MASTER BADGE: GOLD")
+            # --- MOTOR DE CALCUL STATISTICI ---
+            # 1. Valori de baza in functie de clasa armei
+            base_fp = 50
+            base_acc = 50
+            base_mob = 50
+            base_hnd = 50
 
-    # --- RESTUL MENIURILOR ---
-    elif meniu == "🏠 LOBBY":
-        st.title("MULTIPLAYER LOBBY")
-        st.button("FIND A MATCH", type="primary")
-    
-    elif meniu == "🎫 BATTLE PASS":
-        st.title("BATTLE PASS")
-        st.write("Season 1: Active")
+            if "Sniper" in cat_p: base_fp=90; base_acc=70; base_mob=20; base_hnd=30
+            elif "Marksman" in cat_p: base_fp=75; base_acc=80; base_mob=40; base_hnd=45
+            elif "SMG" in cat_p: base_fp=40; base_acc=40; base_mob=80; base_hnd=70
+            elif "Shotgun" in cat_p: base_fp=85; base_acc=30; base_mob=60; base_hnd=60
+            elif "LMG" in cat_p: base_fp=70; base_acc=60; base_mob=30; base_hnd=30
+            elif "Assault" in cat_p: base_fp=60; base_acc=60; base_mob=50; base_hnd=50
 
-    elif meniu == "🛒 STORE":
-        st.title("STORE")
-        st.write("No new bundles.")
+            # 2. Modificari in functie de ATASAMENTELE selectate
+            
+            # MUZZLE
+            if "Suppressor" in muz: base_fp -= 5; base_hnd += 5
+            if "Compensator" in muz: base_acc += 10; base_hnd -= 5
+            
+            # BARREL
+            if "Long Barrel" in bar: base_acc += 15; base_mob -= 10
+            if "Short Barrel" in bar: base_mob += 10; base_acc -= 10
+            if "Rapid Fire" in bar: base_fp += 10; base_acc -= 15
 
-    # BUTON LOGOUT
-    st.sidebar.markdown("---")
-    if st.sidebar.button("Ieșire (Logout)"):
-        st.session_state.logat = False
-        st.rerun()
+            # UNDERBARREL
+            if "Vertical Grip" in und: base_acc += 8; base_hnd += 2
+            if "Ranger" in und: base_acc += 12; base_mob -= 5
+            if "Laser" in
