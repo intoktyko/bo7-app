@@ -1,8 +1,7 @@
 import streamlit as st
 
-st.set_page_config(page_title="BO7 WAR ROOM", page_icon="🔥", layout="wide")
+st.set_page_config(page_title="BO7 Gunsmith PRO", page_icon="📊", layout="wide")
 
-# Login
 if 'logat' not in st.session_state:
     st.session_state.logat = False
 
@@ -10,18 +9,16 @@ def verifica():
     if st.session_state.user.lower() == "sefu" and st.session_state.parola == "admin123":
         st.session_state.logat = True
     else:
-        st.error("Acces Respins!")
+        st.error("Date incorecte!")
 
 if not st.session_state.logat:
     st.title("🔒 BO7 War Room Login")
     st.text_input("Utilizator:", key="user")
     st.text_input("Parola:", type="password", key="parola")
-    st.button("Intră în Arsenal", on_click=verifica)
+    st.button("Intră în Armurărie", on_click=verifica)
 else:
-    st.sidebar.title("🎮 Meniu Multiplayer")
-    pagina = st.sidebar.radio("Navighează:", ["🏆 TOP 3 META", "🔫 Arsenal Complet", "🏅 Tracker Camo"])
-
-    # Baza de date din pozele tale
+    st.sidebar.title("🎮 Meniu Armurier")
+    # Arsenalul tău (cele 9 categorii)
     arsenal = {
         "Assault Rifles": ["Maddox RFB", "M15 MOD 0", "AK-27", "MXR-17", "X9 Maverick", "DS20 Mirage", "Peacekeeper MK1"],
         "SMGs": ["C9", "KSV", "Tanto .22", "Jackal PDW", "PP-919"],
@@ -30,50 +27,58 @@ else:
         "Marksman Rifles": ["M8A1", "Warden 308", "M34 Novaline"],
         "Sniper Rifles": ["VS Recon", "Hawker HX", "Shadow SK", "XR-3 ION"],
         "Pistols": ["Jäger 45", "Velox 8.7", "Coda 9"],
-        "Launchers": ["AAROW 109", "A.R.C. MI", "HEI-4"],
+        "Launchers": ["AAROW 109", "A.R.C. MI"],
         "Specials": ["NX Ravager"]
     }
 
-    # --- PAGINA 1: TOP 3 META ---
-    if pagina == "🏆 TOP 3 META":
-        st.header("🔥 Cele mai bune 3 arme din fiecare categorie")
-        st.write("Acestea sunt armele care domină meta-ul actual:")
+    st.header("🔧 Gunsmith Simulator")
+    
+    col1, col2 = st.columns([1, 1.5])
+    
+    with col1:
+        cat = st.selectbox("Categorie:", list(arsenal.keys()))
+        arma = st.selectbox("Arma:", arsenal[cat])
+        st.write("---")
+        # Selectori Atasamente
+        opt = st.selectbox("Optic:", ["Standard", "Slate Reflex", "Red Dot", "4x Optic"])
+        muz = st.selectbox("Muzzle:", ["None", "Suppressor", "Compensator"])
+        bar = st.selectbox("Barrel:", ["Standard", "Long Barrel (+Range)", "Short Barrel (+Speed)"])
+        und = st.selectbox("Underbarrel:", ["None", "Vertical Grip (+Control)", "Ranger Foregrip"])
+        mag = st.selectbox("Magazine:", ["Standard", "Fast Mag", "Extended Mag"])
+
+    with col2:
+        st.subheader(f"📊 Statistici Live: {arma}")
         
-        c1, c2 = st.columns(2)
-        with c1:
-            with st.expander("🥇 TOP 3 Assault Rifles"):
-                st.write("1. *Maddox RFB* (Build: Reflex, Long Barrel, Vertical Grip, Fast Mag, Quickdraw Stock)")
-                st.write("2. *AK-27* (Build: Compensator, Heavy Barrel, Ranger Grip, Extended Mag, Recoil Pad)")
-                st.write("3. *MXR-17* (Build: Red Dot, Reinforced Barrel, Commando Grip, Fast Mag, Ergonomic Grip)")
-            
-            with st.expander("🥇 TOP 3 SMGs"):
-                st.write("1. *Jackal PDW* (Build: No Stock, Short Barrel, Laser, Fast Mag, Ergonomic Grip)")
-                st.write("2. *C9* (Build: Suppressor, Long Barrel, Vertical Grip, Extended Mag, Recoil Pad)")
-                st.write("3. *KSV* (Build: Reflex, Rapid Fire, Ranger Grip, Fast Mag, Lightweight Stock)")
+        # Logica de calcul statistici (Simulare)
+        firepower = 60
+        accuracy = 55
+        mobility = 50
+        handling = 45
 
-        with c2:
-            with st.expander("🥇 TOP 3 Marksman/Sniper"):
-                st.write("1. *M8A1* (Build: 4x Optic, Match Grade Barrel, Bipod Grip, High Caliber, Heavy Stock)")
-                st.write("2. *VS Recon* (Build: Variable Zoom, Reinforced Barrel, Bipod, Fast Mag, Heavy Stock)")
-                st.write("3. *Warden 308* (Build: Thermal, Long Barrel, Vertical Grip, Extended Mag, Quickdraw)")
+        # Modificari in functie de selectie
+        if "Long Barrel" in bar: accuracy += 15; mobility -= 10
+        if "Short Barrel" in bar: mobility += 15; accuracy -= 10
+        if "Vertical Grip" in und: accuracy += 10; handling += 5
+        if "Suppressor" in muz: handling += 10; firepower -= 5
+        if "Fast Mag" in mag: handling += 15; mobility -= 5
 
-    # --- PAGINA 2: ARSENAL COMPLET ---
-    elif pagina == "🔫 Arsenal Complet":
-        st.header("🗃️ Toate armele pe categorii")
-        cat_sel = st.selectbox("Alege Categoria:", list(arsenal.keys()))
-        arma_sel = st.selectbox("Vezi Arma:", arsenal[cat_sel])
+        # Afisare Bare (ca in joc)
+        st.write(f"🔥 Firepower: {firepower}")
+        st.progress(min(firepower/100, 1.0))
         
-        st.subheader(f"Informații: {arma_sel}")
-        if arma_sel in ["Maddox RFB", "M8A1", "Warden 308", "Jäger 45"]:
-            st.success("Statut: MAX LEVEL (Bravo, șefu'!)")
-        st.write("Aici poți adăuga note personale sau loadout-uri secundare pentru această armă.")
+        st.write(f"🎯 Accuracy: {accuracy}")
+        st.progress(min(accuracy/100, 1.0))
+        
+        st.write(f"🏃 Mobility: {mobility}")
+        st.progress(min(mobility/100, 1.0))
+        
+        st.write(f"⚡ Handling: {handling}")
+        st.progress(min(handling/100, 1.0))
 
-    # --- PAGINA 3: CAMO ---
-    elif pagina == "🏅 Tracker Camo":
-        st.header("🏆 Progres Master Camo")
-        st.checkbox("Mastery: GOLD", value=True)
-        st.checkbox("Mastery: DIAMOND")
-        st.checkbox("Special: ELEVATE (Universal)", value=True)
+        st.write("---")
+        if arma in ["Maddox RFB", "M8A1", "VS Recon", "Jäger 45"]:
+            st.success("⭐ STATUS: NIVEL MAXIM ATINS")
+            st.write("Toate atașamentele sunt deblocate pentru testare.")
 
     if st.sidebar.button("Logout"):
         st.session_state.logat = False
